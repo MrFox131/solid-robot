@@ -52,7 +52,7 @@ class Enemie {
         this.speed  = 1.5;
     }
     Fire(){
-        bullets.push(new Bullet(false, this.x+canvas.height/50, this.y+5));
+        bullets.push(new Bullet(false, this.x+canvas.height*this.constant*0.5, this.y+5));
     }
 }
 
@@ -96,11 +96,90 @@ class EasyEnemie extends Enemie{
 }
 
 class MiddleEnemie extends Enemie{
-    
+        constructor(x){
+        super();
+        this.image = new Image();
+        this.image.src = "m_enemieMiddle.png";
+        this.lives = 5;
+        this.y = canvas.height/10*1.5;
+        this.x = x;
+        this.moveX = Math.random();
+        this.moveY = Math.random();
+        this.counter=0;
+        this.constant = 0.06;
+    }
+    Collision(){
+        this.lives--;
+    }
+    Update(){
+        if(Math.random()<=1/20){
+            this.Fire();
+        }
+        if(this.counter==30){
+            this.counter=0;
+            this.moveX = Math.random();
+            this.moveY = Math.random();
+        }
+        if(this.moveX>=0.67 && this.x<canvas.width-canvas.height/25){
+            this.x+=this.speed;
+        } else if(this.moveX<=0.33 && this.x>canvas.height/25){
+            this.x-=this.speed;
+        }
+        if(this.moveY>=0.67 && this.y<canvas.height/2){
+            this.y+=this.speed
+        } else if(this.moveY<=0.33 && this.y>0){
+            this.y-=this.speed;
+        }
+        this.counter++;
+    }
 }
 
 class Boss extends Enemie{
-    
+    constructor(x){
+        super();
+        this.image = new Image();
+        this.image.src = "boss.png";
+        this.lives = 20;
+        this.y = 0;
+        this.x = x;
+        this.moveX = Math.random();
+        this.moveY = Math.random();
+        this.counter=0;
+        this.constant = 0.2;
+    }
+    Collision(){
+        this.lives--;
+    }
+    Update(){
+            this.Fire();
+        if(this.counter==30){
+            this.counter=0;
+            this.moveX = Math.random();
+            this.moveY = Math.random();
+        }
+        if(this.moveX>=0.67 && this.x<canvas.width-canvas.height/25){
+            this.x+=this.speed;
+        } else if(this.moveX<=0.33 && this.x>canvas.height/25){
+            this.x-=this.speed;
+        }
+        if(this.moveY>=0.67 && this.y<canvas.height/2){
+            this.y+=this.speed
+        } else if(this.moveY<=0.33 && this.y>0){
+            this.y-=this.speed;
+        }
+        this.counter++;
+    }
+    Fire(){
+        if(Math.random()<1/20){
+        bullets.push(new Bullet(false, this.x+canvas.height*this.constant*0.33, this.y+5));
+        }
+        if(Math.random()<1/20){
+        bullets.push(new Bullet(false, this.x+canvas.height*this.constant*0.5, this.y+5));
+        }
+        if(Math.random()<1/20){
+        bullets.push(new Bullet(false, this.x+canvas.height*this.constant*0.66, this.y+5));
+        }
+    }
 }
 
 function restart(e){
@@ -203,6 +282,22 @@ function createFirstWave(){
     enemies.push(new EasyEnemie(canvas.width/3*2 - canvas.height/6))
     enemies.push(new EasyEnemie(canvas.width  - canvas.height/6))
 }
+
+function createSecondWave(){
+        enemies.push(new EasyEnemie(canvas.width/3/2))
+    enemies.push(new EasyEnemie(canvas.width/3*2 - canvas.height/6))
+    enemies.push(new EasyEnemie(canvas.width  - canvas.height/6))
+    enemies.push(new MiddleEnemie(canvas.width/2  - canvas.height/4))
+    enemies.push(new MiddleEnemie(canvas.width   - canvas.height/4))
+}
+
+function createThirdWave(){
+        enemies.push(new MiddleEnemie(canvas.width/3  - canvas.height/6))
+    enemies.push(new MiddleEnemie(canvas.width   - canvas.height/6))
+    enemies.push(new Boss(canvas.width - canvas.width/2))
+}
+secondWave = true;
+thirdWave = false;
 keyIsDown = {
     UP: false,
     DOWN: false,
@@ -402,6 +497,17 @@ function Draw(){
     enemies = enemies.filter(enemie=>{
         return enemie.lives>0;
     })
+    if(enemies.length == 0){
+        if(!secondWave){
+            createSecondWave();
+            secondWave = true;
+        } else if(!thirdWave){
+            createThirdWave();
+            thirdWave=true;
+        } else {
+            createSecondWave();
+        }
+    }
 }
 
 window.addEventListener("resize", Resize);
