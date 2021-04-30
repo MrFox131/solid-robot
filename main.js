@@ -1,6 +1,6 @@
-			
-var canvas = document.getElementById("game"),
-    ctx     = canvas.getContext('2d');
+canvas = document.getElementById("game"),
+ctx     = canvas.getContext('2d');
+
 function Resize(){
     canvas = document.getElementById("game")
     canvas.width = document.getElementsByTagName("body")[0].clientWidth;
@@ -8,12 +8,16 @@ function Resize(){
 }
 
 function Start(){
+    time = 0;
     createFirstWave(); 
     timer = setInterval(Update, 1000/60);
+    time_game = setInterval(()=>{time++}, 1000);
+    
 }
 
 function Stop(){
     clearInterval(timer);
+    clearInterval(time_game);
 }
 
 function Update(){
@@ -99,8 +103,19 @@ class Boss extends Enemie{
     
 }
 
+function restart(e){
+    window.removeEventListener("keydown", restart);
+    window.removeEventListener("touchstart", restart);
+    init();
+}
+
 function gameOver(){
-    
+    ctx.font = "30px arial";
+    ctx.fillStyle = "white";
+    ctx.textAlign = "center";
+    ctx.fillText("You Lose", canvas.width/2, canvas.height/2);
+    window.addEventListener("keydown", restart);
+    window.addEventListener("touchstart", restart);
 }
 
 
@@ -128,15 +143,15 @@ class Player {
         this.bulletproof = false;
     }
     Collision(){
-        if(bulletproof){
+        if(this.bulletproof){
             return;
         }
-        lives--;
-        if(lives==0){
+        this.lives--;
+        if(this.lives==0){
             Stop();
             gameOver();
         }
-        bulletproof = true;
+        this.bulletproof = true;
         setTimeout(()=>player.bulletproof = false, 3000);
     }
     Move(axis, d){
@@ -181,9 +196,7 @@ class Player {
 }
 Resize();
 playerSpeed = 3.5;
-space = new Space("background.jpg", 0, 0);
-space2 = new Space("background.jpg", 0, -canvas.height);
-player = new Player("playerspaceship.png");
+
 
 function createFirstWave(){
     enemies.push(new EasyEnemie(canvas.width/3/2))
@@ -242,6 +255,7 @@ window.addEventListener("keydown", keyDown);
 touchscreen = false;
 mousecontrole= false;
 ongoingTouch = null;
+time = 0;
 var fireTimer;
 function Fire(){
     console.log("fire")
@@ -285,7 +299,12 @@ function setTouchScreenControl(e){
 
 window.onload = init;
 
-function init(){   
+function init(){
+    enemies = []
+    bullets = []
+    space = new Space("background.jpg", 0, 0);
+    space2 = new Space("background.jpg", 0, -canvas.height);
+    player = new Player("playerspaceship.png");
     Resize();
     ctx.clearRect(0,0,canvas.width, canvas.height);
     space.Update(space2);
@@ -342,6 +361,11 @@ function Draw(){
     ctx.drawImage(space.image, 0,0,space.image.width, space.image.height, space.x, space.y, canvas.width, canvas.height);//отрисовка фона
     ctx.drawImage(space2.image, 0,0,space2.image.width, space2.image.height, space2.x, space2.y, canvas.width, canvas.height);//отрисовка 2 фона
     ctx.drawImage(player.image, 0,0,player.image.width, player.image.height, player.x, player.y, canvas.height/20, canvas.height/20);//отрисовка игрока
+    ctx.font = "30px arial";
+    ctx.fillStyle = "red";
+    ctx.fillText(player.lives.toString(), 30, 30);
+    ctx.fillText(time.toString(), canvas.width-120, 30);
+    ctx.stroke();
     someTemp = []
     bullets.forEach (bullet => {
         bullet.Update();
