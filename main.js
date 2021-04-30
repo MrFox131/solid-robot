@@ -8,7 +8,7 @@ function Resize(){
 }
 
 function Start(){
-    createFirstWave();
+    createFirstWave(); 
     timer = setInterval(Update, 1000/60);
 }
 
@@ -47,9 +47,6 @@ class Enemie {
         }
         this.speed  = 1.5;
     }
-    Collision(){
-        lives--;
-    }
     Fire(){
         bullets.push(new Bullet(false, this.x+canvas.height/50, this.y+5));
     }
@@ -66,10 +63,13 @@ class EasyEnemie extends Enemie{
         this.moveX = Math.random();
         this.moveY = Math.random();
         this.counter=0;
-        
+        this.constant = 0.04;
+    }
+    Collision(){
+        this.lives--;
     }
     Update(){
-        if(Math.random()<=1/17){
+        if(Math.random()<=1/23){
             this.Fire();
         }
         if(this.counter==30){
@@ -330,7 +330,7 @@ function Draw(){
         }
         if(keyIsDown.SPACE ){
             if (fireTimer==undefined){
-                fireTimer = setInterval(Fire, 1000/6);
+                fireTimer = setInterval(Fire, 1000/3);
             }
         } else {
             if(fireTimer && !touchscreen){
@@ -353,13 +353,30 @@ function Draw(){
         ctx.stroke();
         ctx.closePath();
         if(bullet.y>0 &&  bullet.y<canvas.height){
-            someTemp.push(bullet)
+            someTemp.push(bullet);
         }
     })
     bullets = someTemp;
     enemies.forEach(enemie=>{
         enemie.Update()
-        ctx.drawImage(enemie.image, 0,0,enemie.image.width, enemie.image.height, enemie.x, enemie.y, canvas.height/25, canvas.height/25);
+        ctx.drawImage(enemie.image, 0,0,enemie.image.width, enemie.image.height, enemie.x, enemie.y, canvas.height*enemie.constant, canvas.height*enemie.constant);
+    })
+    bullets.forEach(bullet => {
+        if(bullet.our){
+            enemies.forEach((enemie, index) => {
+                if(enemie.y<bullet.y && enemie.y+enemie.constant*canvas.height>bullet.y && enemie.x<bullet.x && enemie.x+enemie.constant*canvas.height>bullet.x){
+                    bullet.y=-1000;
+                    enemie.Collision();
+                }
+            })
+        } else {
+            if(player.y<bullet.y && player.y+0.05*canvas.height>bullet.y && player.x<bullet.x && player.x+0.05*canvas.height>bullet.x){
+                player.Collision();
+            }
+        }
+    })
+    enemies = enemies.filter(enemie=>{
+        return enemie.lives>0;
     })
 }
 
