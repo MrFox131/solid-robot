@@ -74,9 +74,9 @@ class MiddleEnemie extends Enemie{
             this.moveX = Math.random();
             this.moveY = Math.random();
         }
-        if(this.moveX>=0.67 && this.x<canvas.width-canvas.height/25){
+        if(this.moveX>=0.67 && this.x<canvas.width-canvas.height*this.constant){
             this.x+=this.speed;
-        } else if(this.moveX<=0.33 && this.x>canvas.height/25){
+        } else if(this.moveX<=0.33 && this.x>canvas.height*this.constant){
             this.x-=this.speed;
         }
         if(this.moveY>=0.67 && this.y<canvas.height/2){
@@ -111,9 +111,9 @@ class Boss extends Enemie{
             this.moveX = Math.random();
             this.moveY = Math.random();
         }
-        if(this.moveX>=0.67 && this.x<canvas.width-canvas.height/25){
+        if(this.moveX>=0.67 && this.x<canvas.width-canvas.height*this.constant){
             this.x+=this.speed;
-        } else if(this.moveX<=0.33 && this.x>canvas.height/25){
+        } else if(this.moveX<=0.33 && this.x>canvas.height*this.constant){
             this.x-=this.speed;
         }
         if(this.moveY>=0.67 && this.y<canvas.height/2){
@@ -491,6 +491,7 @@ function Draw(){
         } else {
             if(player.y<bullet.y && player.y+0.05*canvas.height>bullet.y && player.x<bullet.x && player.x+0.05*canvas.height>bullet.x){
                 player.Collision();
+                bullet.y = -1000;
             }
         }
     })
