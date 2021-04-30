@@ -51,7 +51,7 @@ class Bullet {
         this.y = y;
     }
     Update(){
-        this.y += playerSpeed*1.2*(this.our?-1:1);
+        this.y += playerSpeed*1.3*(this.our?-1:1);
     }
 }
 
@@ -207,6 +207,7 @@ function setTouchScreenControl(e){
     window.removeEventListener("keydown", keyDown);
     window.removeEventListener("keydown", keyboardControl);
     touchscreen = true;
+    fireTimer = setInterval(Fire, 1000/6);
     window.addEventListener("touchstart", TouchStartHandle, { passive: false });
     window.addEventListener("touchmove", TouchMoveHandle, { passive: false });
     window.addEventListener("touchend", TouchEndHandle, { passive: false });
@@ -277,9 +278,9 @@ function Draw(){
         bullet.Update();
         ctx.beginPath();
         ctx.moveTo(bullet.x, bullet.y);
-        ctx.lineWidth = 3;
-        ctx.strokeStyle="red"
-        ctx.lineTo(bullet.x, bullet.y+10*(bullet.our?-1:1));
+        ctx.lineWidth = 4;
+        ctx.strokeStyle=bullet.our?"green":"red"
+        ctx.lineTo(bullet.x, bullet.y+12*(bullet.our?-1:1));
         ctx.stroke();
         ctx.closePath();
         if(bullet.y>0){
