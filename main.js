@@ -38,12 +38,29 @@ class Space{
 
     }
 }
+function gameOver(){
+    
+}
 class Player {
     constructor(image){
         this.x = canvas.width/2-canvas.height/50;
         this.y = canvas.height - canvas.height/20-canvas.height*0.1;
         this.image = new Image();
         this.image.src = image;
+        this.lives = 3;
+        this.bulletproof = false;
+    }
+    Collision(){
+        if(bulletproof){
+            return;
+        }
+        lives--;
+        if(lives==0){
+            Stop();
+            gameOver();
+        }
+        bulletproof = true;
+        setTimeout(()=>player.bulletproof = false, 3000);
     }
     Move(axis, d){
         if (axis == "x"){
@@ -165,12 +182,45 @@ function TouchEndHandle(e){
         ongoingTouch = null;
     }
 }
-function setTouchScreenControl(){
+function setTouchScreenControl(e){
+    window.removeEventListener("touchstart", setTouchScreenControl);
+    window.removeEventListener("keyup", keyUp);
+    window.removeEventListener("keydown", keyDown);
+    window.removeEventListener("keydown", keyboardControl);
     touchscreen = true;
     window.addEventListener("touchstart", TouchStartHandle, { passive: false });
     window.addEventListener("touchmove", TouchMoveHandle, { passive: false });
     window.addEventListener("touchend", TouchEndHandle, { passive: false });
+    Start();
 }
+
+window.onload = init;
+
+function init(){   
+    Resize();
+    ctx.clearRect(0,0,canvas.width, canvas.height);
+    space.Update(space2);
+    space2.Update(space);
+    ctx.drawImage(space.image, 0,0,space.image.width, space.image.height, space.x, space.y, canvas.width, canvas.height);//отрисовка фона
+    ctx.drawImage(space2.image, 0,0,space2.image.width, space2.image.height, space2.x, space2.y, canvas.width, canvas.height);//отрисовка 2 фона
+    ctx.font = "30px arial";
+    ctx.fillStyle = "white";
+    ctx.textAlign = "center";
+    ctx.fillText("Touch the screen", canvas.width/2, canvas.height/2);
+    ctx.fillText("or", canvas.width/2, canvas.height/2+30);
+    ctx.fillText("Press \"Space\"", canvas.width/2, canvas.height/2+60);
+    window.addEventListener("touchstart", setTouchScreenControl);
+    window.addEventListener("keydown", keyboardControl);
+}
+
+function keyboardControl(e){
+    console.log("Keyboard control detected");
+    window.removeEventListener("touchstart", setTouchScreenControl);
+    window.removeEventListener("keydown", keyboardControl);
+    Start();
+}
+
+document.addEventListener("loaded", init);
 
 function Draw(){
     ctx.clearRect(0,0, canvas.width, canvas.height);
@@ -206,4 +256,3 @@ function Draw(){
 }
 
 window.addEventListener("resize", Resize);
-Start()
