@@ -1,49 +1,3 @@
-canvas = document.getElementById("game"),
-ctx     = canvas.getContext('2d');
-
-function Resize(){
-    canvas = document.getElementById("game")
-    canvas.width = document.getElementsByTagName("body")[0].clientWidth;
-    canvas.height = document.getElementsByTagName("body")[0].clientHeight;
-}
-
-function Start(){
-    time = 0;
-    createFirstWave(); 
-    timer = setInterval(Update, 1000/60);
-    time_game = setInterval(()=>{time++}, 1000);
-    
-}
-
-function Stop(){
-    clearInterval(timer);
-    clearInterval(time_game);
-}
-
-function Update(){
-    Draw();
-}
-
-
-background_speed = 1
-class Space{
-    constructor(image, x, y){
-        this.x = x;
-        this.y = y;
-        this.image = new Image();
-        this.image.src = image;
-    }
-
-    Update(anotherspace)
-    {
-        this.y += background_speed;
-        if(this.y>canvas.height){
-            this.y = anotherspace.y-canvas.height+background_speed;
-        }
-
-    }
-}
-
 class Enemie {
     constructor(){
         if(this.constructor == "Enemie"){
@@ -182,25 +136,6 @@ class Boss extends Enemie{
     }
 }
 
-function restart(e){
-    window.removeEventListener("keydown", restart);
-    window.removeEventListener("touchstart", restart);
-    init();
-}
-
-function gameOver(){
-    ctx.font = "30px arial";
-    ctx.fillStyle = "white";
-    ctx.textAlign = "center";
-    ctx.fillText("You Lose", canvas.width/2, canvas.height/2);
-    window.addEventListener("keydown", restart);
-    window.addEventListener("touchstart", restart);
-}
-
-
-var bullets = []
-var enemies = []
-
 class Bullet {
     constructor(our, x, y){
         this.our = our;
@@ -273,6 +208,71 @@ class Player {
     }
     
 }
+class Space{
+    constructor(image, x, y){
+        this.x = x;
+        this.y = y;
+        this.image = new Image();
+        this.image.src = image;
+    }
+
+    Update(anotherspace)
+    {
+        this.y += background_speed;
+        if(this.y>canvas.height){
+            this.y = anotherspace.y-canvas.height+background_speed;
+        }
+
+    }
+}
+
+canvas = document.getElementById("game"),
+ctx     = canvas.getContext('2d');
+background_speed = 1
+
+function Resize(){
+    canvas = document.getElementById("game")
+    canvas.width = document.getElementsByTagName("body")[0].clientWidth;
+    canvas.height = document.getElementsByTagName("body")[0].clientHeight;
+}
+
+function Start(){
+    time = 0;
+    createFirstWave(); 
+    timer = setInterval(Update, 1000/60);
+    time_game = setInterval(()=>{time++}, 1000);
+    
+}
+
+function Stop(){
+    clearInterval(timer);
+    clearInterval(time_game);
+}
+
+function Update(){
+    Draw();
+}
+
+function restart(e){
+    window.removeEventListener("keydown", restart);
+    window.removeEventListener("touchstart", restart);
+    init();
+}
+
+function gameOver(){
+    ctx.font = "30px arial";
+    ctx.fillStyle = "white";
+    ctx.textAlign = "center";
+    ctx.fillText("You Lose", canvas.width/2, canvas.height/2);
+    window.addEventListener("keydown", restart);
+    window.addEventListener("touchstart", restart);
+}
+
+
+var bullets = []
+var enemies = []
+
+
 Resize();
 playerSpeed = 3.5;
 
@@ -296,7 +296,7 @@ function createThirdWave(){
     enemies.push(new MiddleEnemie(canvas.width   - canvas.height/6))
     enemies.push(new Boss(canvas.width - canvas.width/2))
 }
-secondWave = true;
+secondWave = false;
 thirdWave = false;
 keyIsDown = {
     UP: false,
