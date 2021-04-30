@@ -10,11 +10,17 @@ class Enemie {
     }
 }
 
+easyEnemieImage = new Image();
+easyEnemieImage.src = "easyEnemie.png"
+middleEnemieImage = new Image();
+middleEnemieImage.src = "m_enemieMiddle.png";
+bossImage = new Image();
+bossImage.src = "boss.png";
+
 class EasyEnemie extends Enemie{
     constructor(x){
         super();
-        this.image = new Image();
-        this.image.src = "easyEnemie.png";
+        this.image = easyEnemieImage;
         this.lives = 3;
         this.y = canvas.height/10;
         this.x = x;
@@ -52,8 +58,7 @@ class EasyEnemie extends Enemie{
 class MiddleEnemie extends Enemie{
         constructor(x){
         super();
-        this.image = new Image();
-        this.image.src = "m_enemieMiddle.png";
+        this.image = middleEnemieImage;
         this.lives = 5;
         this.y = canvas.height/10*1.5;
         this.x = x;
@@ -91,8 +96,7 @@ class MiddleEnemie extends Enemie{
 class Boss extends Enemie{
     constructor(x){
         super();
-        this.image = new Image();
-        this.image.src = "boss.png";
+        this.image = bossImage;
         this.lives = 20;
         this.y = 0;
         this.x = x;
@@ -412,6 +416,8 @@ function init(){
     ctx.fillText("Touch the screen", canvas.width/2, canvas.height/2);
     ctx.fillText("or", canvas.width/2, canvas.height/2+30);
     ctx.fillText("Press \"Space\"", canvas.width/2, canvas.height/2+60);
+    ctx.fillStyle = "red";
+    ctx.fillText(time.toString(), canvas.width-120, 30);
     window.addEventListener("touchstart", setTouchScreenControl);
     window.addEventListener("keydown", keyboardControl);
 }
