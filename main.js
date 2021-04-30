@@ -8,6 +8,7 @@ function Resize(){
 }
 
 function Start(){
+    createFirstWave();
     timer = setInterval(Update, 1000/60);
 }
 
@@ -78,7 +79,7 @@ class EasyEnemie extends Enemie{
         }
         if(this.moveX>=0.67 && this.x<canvas.width-canvas.height/25){
             this.x+=this.speed;
-        } else if(this.moveX<=0.33 && this.y>0){
+        } else if(this.moveX<=0.33 && this.x>canvas.height/25){
             this.x-=this.speed;
         }
         if(this.moveY>=0.67 && this.y<canvas.height/2){
@@ -183,7 +184,12 @@ playerSpeed = 3.5;
 space = new Space("background.jpg", 0, 0);
 space2 = new Space("background.jpg", 0, -canvas.height);
 player = new Player("playerspaceship.png");
-enemies.push(new EasyEnemie(1000));
+
+function createFirstWave(){
+    enemies.push(new EasyEnemie(canvas.width/3/2))
+    enemies.push(new EasyEnemie(canvas.width/3*2 - canvas.height/6))
+    enemies.push(new EasyEnemie(canvas.width  - canvas.height/6))
+}
 keyIsDown = {
     UP: false,
     DOWN: false,
