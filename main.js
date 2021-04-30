@@ -41,6 +41,20 @@ class Space{
 function gameOver(){
     
 }
+
+var bullets = []
+
+class Bullet {
+    constructor(our, x, y){
+        this.our = our;
+        this.x = x;
+        this.y = y;
+    }
+    Update(){
+        this.y += playerSpeed*1.2*(this.our?-1:1);
+    }
+}
+
 class Player {
     constructor(image){
         this.x = canvas.width/2-canvas.height/50;
@@ -97,6 +111,10 @@ class Player {
             this.y=canvas.height-canvas.height/20-20;
         }
     }
+    Fire(){
+        bullets.push(new Bullet(true, this.x+canvas.height/40, this.y+5));
+    }
+    
 }
 Resize();
 playerSpeed = 3.5;
@@ -157,7 +175,8 @@ mousecontrole= false;
 ongoingTouch = null;
 var fireTimer;
 function Fire(){
-    console.log("Fire");
+    console.log("fire")
+    player.Fire();
 }
 function TouchStartHandle(e){
     e.preventDefault();
@@ -253,6 +272,21 @@ function Draw(){
     ctx.drawImage(space.image, 0,0,space.image.width, space.image.height, space.x, space.y, canvas.width, canvas.height);//отрисовка фона
     ctx.drawImage(space2.image, 0,0,space2.image.width, space2.image.height, space2.x, space2.y, canvas.width, canvas.height);//отрисовка 2 фона
     ctx.drawImage(player.image, 0,0,player.image.width, player.image.height, player.x, player.y, canvas.height/20, canvas.height/20);//отрисовка игрока
+    someTemp = []
+    bullets.forEach (bullet => {
+        bullet.Update();
+        ctx.beginPath();
+        ctx.moveTo(bullet.x, bullet.y);
+        ctx.lineWidth = 3;
+        ctx.strokeStyle="red"
+        ctx.lineTo(bullet.x, bullet.y+10*(bullet.our?-1:1));
+        ctx.stroke();
+        ctx.closePath();
+        if(bullet.y>0){
+            someTemp.push(bullet)
+        }
+    })
+    bullets = someTemp;
 }
 
 window.addEventListener("resize", Resize);
