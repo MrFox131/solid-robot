@@ -3,8 +3,8 @@ var canvas = document.getElementById("game"),
     ctx     = canvas.getContext('2d');
 function Resize(){
     canvas = document.getElementById("game")
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.width = document.getElementsByTagName("body")[0].clientWidth;
+    canvas.height = document.getElementsByTagName("body")[0].clientHeight*0.8;
 }
 
 function Start(){
@@ -41,7 +41,7 @@ class Space{
 class Player {
     constructor(image){
         this.x = canvas.width/2-canvas.width/30;
-        this.y = canvas.height - canvas.width/15-20;
+        this.y = canvas.height - canvas.width/15-canvas.height*0.1;
         this.image = new Image();
         this.image.src = image;
     }
@@ -143,33 +143,31 @@ function Fire(){
 }
 function TouchStartHandle(e){
     e.preventDefault();
-    console.log("touchStarted");
     touchscreen = true;
     if(fireTimer == null){
         fireTimer = setInterval(Fire, 1000/6);
     }
-    if(ongoingTouche!=null){
+    if(ongoingTouch==null){
         ongoingTouch = e.changedTouches[0];
     }
 }
 function TouchMoveHandle(e){
-    console.log("toucheChanged");
     e.preventDefault();
     if(ongoingTouch && ongoingTouch.identifier!=e.changedTouches[0].identifier){
         return;
     }
-    player.MoveByTouch(e.changedTouches[0].pageX-ongoingTouch.pageX, e.changedTouches[0].pageY-ongoingTouch.pageY, true);
+    player.MoveByTouch((e.changedTouches[0].pageX-ongoingTouch.pageX), e.changedTouches[0].pageY-ongoingTouch.pageY, true);
+    ongoingTouch = e.changedTouches[0];
 }
 function TouchEndHandle(e){
-    console.log("touchended");
     e.preventDefault();
-    if(ongoingTouch && ongoingTouch.identifier!=e.changedTouches[0].identifier){
+    if(ongoingTouch && ongoingTouch.identifier==e.changedTouches[0].identifier){
         ongoingTouch = null;
     }
 }
-window.addEventListener("touchstart", TouchStartHandle);
-window.addEventListener("touchmove", TouchMoveHandle);
-window.addEventListener("touchend", TouchEndHandle);
+window.addEventListener("touchstart", TouchStartHandle, { passive: false });
+window.addEventListener("touchmove", TouchMoveHandle, { passive: false });
+window.addEventListener("touchend", TouchEndHandle, { passive: false });
 
 function Draw(){
     ctx.clearRect(0,0, canvas.width, canvas.height);
