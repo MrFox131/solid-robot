@@ -38,11 +38,73 @@ class Space{
 
     }
 }
+
+class Enemie {
+    constructor(){
+        if(this.constructor == "Enemie"){
+            throw new Error("Cannot create instance of abstract class");
+        }
+        this.speed  = 1.5;
+    }
+    Collision(){
+        lives--;
+    }
+    Fire(){
+        bullets.push(new Bullet(false, this.x+canvas.height/50, this.y+5));
+    }
+}
+
+class EasyEnemie extends Enemie{
+    constructor(x){
+        super();
+        this.image = new Image();
+        this.image.src = "easyEnemie.png";
+        this.lives = 3;
+        this.y = canvas.height/10;
+        this.x = x;
+        this.moveX = Math.random();
+        this.moveY = Math.random();
+        this.counter=0;
+        
+    }
+    Update(){
+        if(Math.random()<=1/17){
+            this.Fire();
+        }
+        if(this.counter==30){
+            this.counter=0;
+            this.moveX = Math.random();
+            this.moveY = Math.random();
+        }
+        if(this.moveX>=0.67 && this.x<canvas.width-canvas.height/25){
+            this.x+=this.speed;
+        } else if(this.moveX<=0.33 && this.y>0){
+            this.x-=this.speed;
+        }
+        if(this.moveY>=0.67 && this.y<canvas.height/2){
+            this.y+=this.speed
+        } else if(this.moveY<=0.33 && this.y>0){
+            this.y-=this.speed;
+        }
+        this.counter++;
+    }
+}
+
+class MiddleEnemie extends Enemie{
+    
+}
+
+class Boss extends Enemie{
+    
+}
+
 function gameOver(){
     
 }
 
+
 var bullets = []
+var enemies = []
 
 class Bullet {
     constructor(our, x, y){
@@ -121,6 +183,7 @@ playerSpeed = 3.5;
 space = new Space("background.jpg", 0, 0);
 space2 = new Space("background.jpg", 0, -canvas.height);
 player = new Player("playerspaceship.png");
+enemies.push(new EasyEnemie(1000));
 keyIsDown = {
     UP: false,
     DOWN: false,
@@ -283,11 +346,15 @@ function Draw(){
         ctx.lineTo(bullet.x, bullet.y+12*(bullet.our?-1:1));
         ctx.stroke();
         ctx.closePath();
-        if(bullet.y>0){
+        if(bullet.y>0 &&  bullet.y<canvas.height){
             someTemp.push(bullet)
         }
     })
     bullets = someTemp;
+    enemies.forEach(enemie=>{
+        enemie.Update()
+        ctx.drawImage(enemie.image, 0,0,enemie.image.width, enemie.image.height, enemie.x, enemie.y, canvas.height/25, canvas.height/25);
+    })
 }
 
 window.addEventListener("resize", Resize);
