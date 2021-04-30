@@ -4,7 +4,7 @@ var canvas = document.getElementById("game"),
 function Resize(){
     canvas = document.getElementById("game")
     canvas.width = document.getElementsByTagName("body")[0].clientWidth;
-    canvas.height = document.getElementsByTagName("body")[0].clientHeight*0.8;
+    canvas.height = document.getElementsByTagName("body")[0].clientHeight;
 }
 
 function Start(){
@@ -40,8 +40,8 @@ class Space{
 }
 class Player {
     constructor(image){
-        this.x = canvas.width/2-canvas.width/30;
-        this.y = canvas.height - canvas.width/15-canvas.height*0.1;
+        this.x = canvas.width/2-canvas.height/50;
+        this.y = canvas.height - canvas.height/20-canvas.height*0.1;
         this.image = new Image();
         this.image.src = image;
     }
@@ -51,16 +51,16 @@ class Player {
             if(this.x<0){
                 this.x = 0;
             }
-            if(this.x>canvas.width - canvas.width/15){
-                this.x = canvas.width - canvas.width/15;
+            if(this.x>canvas.width - canvas.height/20){
+                this.x = canvas.width - canvas.height/20;
             }
         } else {
             this.y += d;
             if(this.y<0){
                 this.y = 0;
             }
-            if(this.y>canvas.height-canvas.width/15-20){
-                this.y=canvas.height-canvas.width/15-20;
+            if(this.y>canvas.height-canvas.height/20-20){
+                this.y=canvas.height-canvas.height/20-20;
             }
         }
     }
@@ -70,14 +70,14 @@ class Player {
         if(this.x<0){
             this.x = 0;
         }
-        if(this.x>canvas.width - canvas.width/15){
-            this.x = canvas.width - canvas.width/15;
+        if(this.x>canvas.width - canvas.height/20){
+            this.x = canvas.width - canvas.height/20;
         }
         if(this.y<0){
             this.y = 0;
         }
-        if(this.y>canvas.height-canvas.width/15-20){
-            this.y=canvas.height-canvas.width/15-20;
+        if(this.y>canvas.height-canvas.height/20-20){
+            this.y=canvas.height-canvas.height/20-20;
         }
     }
 }
@@ -136,6 +136,7 @@ function keyUp(e){
 window.addEventListener("keyup", keyUp);
 window.addEventListener("keydown", keyDown);
 touchscreen = false;
+mousecontrole= false;
 ongoingTouch = null;
 var fireTimer;
 function Fire(){
@@ -143,8 +144,7 @@ function Fire(){
 }
 function TouchStartHandle(e){
     e.preventDefault();
-    touchscreen = true;
-    if(fireTimer == null){
+    if(fireTimer == undefined){
         fireTimer = setInterval(Fire, 1000/6);
     }
     if(ongoingTouch==null){
@@ -165,39 +165,44 @@ function TouchEndHandle(e){
         ongoingTouch = null;
     }
 }
-window.addEventListener("touchstart", TouchStartHandle, { passive: false });
-window.addEventListener("touchmove", TouchMoveHandle, { passive: false });
-window.addEventListener("touchend", TouchEndHandle, { passive: false });
+function setTouchScreenControl(){
+    touchscreen = true;
+    window.addEventListener("touchstart", TouchStartHandle, { passive: false });
+    window.addEventListener("touchmove", TouchMoveHandle, { passive: false });
+    window.addEventListener("touchend", TouchEndHandle, { passive: false });
+}
 
 function Draw(){
     ctx.clearRect(0,0, canvas.width, canvas.height);
     space.Update(space2);
     space2.Update(space);
-    if(keyIsDown.LEFT){
-        player.Move("x", -playerSpeed)
-    }
-    if(keyIsDown.RIGHT){
-        player.Move("x", playerSpeed);
-    }
-    if(keyIsDown.UP){
-        player.Move("y", -playerSpeed);
-    }
-    if(keyIsDown.DOWN){
-        player.Move("y", playerSpeed);
-    }
-    if(keyIsDown.SPACE ){
-        if (fireTimer==undefined){
-            fireTimer = setInterval(Fire, 1000/6);
+    if(!touchscreen && !mousecontrole){
+        if(keyIsDown.LEFT){
+            player.Move("x", -playerSpeed)
         }
-    } else {
-        if(fireTimer){
-            clearInterval(fireTimer);
-            fireTimer = null;
+        if(keyIsDown.RIGHT){
+            player.Move("x", playerSpeed);
+        }
+        if(keyIsDown.UP){
+            player.Move("y", -playerSpeed);
+        }
+        if(keyIsDown.DOWN){
+            player.Move("y", playerSpeed);
+        }
+        if(keyIsDown.SPACE ){
+            if (fireTimer==undefined){
+                fireTimer = setInterval(Fire, 1000/6);
+            }
+        } else {
+            if(fireTimer && !touchscreen){
+                clearInterval(fireTimer);
+                fireTimer = null;
+            }
         }
     }
-    ctx.drawImage(space.image, 0,0,space.image.width, space.image.height, space.x, space.y, canvas.width, canvas.height);
-    ctx.drawImage(space2.image, 0,0,space2.image.width, space2.image.height, space2.x, space2.y, canvas.width, canvas.height);
-    ctx.drawImage(player.image, 0,0,player.image.width, player.image.height, player.x, player.y, canvas.width/15, canvas.width/15);
+    ctx.drawImage(space.image, 0,0,space.image.width, space.image.height, space.x, space.y, canvas.width, canvas.height);//отрисовка фона
+    ctx.drawImage(space2.image, 0,0,space2.image.width, space2.image.height, space2.x, space2.y, canvas.width, canvas.height);//отрисовка 2 фона
+    ctx.drawImage(player.image, 0,0,player.image.width, player.image.height, player.x, player.y, canvas.height/20, canvas.height/20);//отрисовка игрока
 }
 
 window.addEventListener("resize", Resize);
