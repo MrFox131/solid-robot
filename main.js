@@ -359,7 +359,7 @@ function Fire(){
 function TouchStartHandle(e){
     e.preventDefault();
     if(fireTimer == undefined){
-        fireTimer = setInterval(Fire, 1000/6);
+        fireTimer = setInterval(Fire, 1000/3);
     }
     if(ongoingTouch==null){
         ongoingTouch = e.changedTouches[0];
